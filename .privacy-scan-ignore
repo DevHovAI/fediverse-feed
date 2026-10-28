@@ -1,0 +1,6 @@
+# Fediverse addresses look like mail addresses: community@server, @account@server.
+# Only public example communities, no person.
+memes@lemmy\.(world|ml)
+@account@server
+# Mastodon status URIs contain /users/<name>/ – the test fixtures use the made-up masto.example.
+masto\.example/users/
