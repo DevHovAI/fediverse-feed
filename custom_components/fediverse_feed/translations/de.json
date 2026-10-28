@@ -1,0 +1,41 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Fediverse Feed",
+        "description": "Lemmy und Mastodon funktionieren ohne Konto. Pixelfed-Server brauchen einen Zugangsschlüssel: in Pixelfed unter Einstellungen → Anwendungen → Persönliche Zugriffstoken einen mit dem Bereich „read“ anlegen und hier einfügen. Ein Mastodon-Schlüssel ist nur für Server nötig, die ihre Zeitleisten verbergen.",
+        "data": {
+          "pixelfed_instance": "Pixelfed-Server",
+          "pixelfed_token": "Pixelfed-Zugangsschlüssel",
+          "mastodon_instance": "Mastodon-Server",
+          "mastodon_token": "Mastodon-Zugangsschlüssel (optional)"
+        }
+      }
+    },
+    "error": {
+      "invalid_token": "Der Server lehnt diesen Schlüssel ab.",
+      "cannot_connect": "Der Server ist nicht erreichbar."
+    },
+    "abort": {
+      "single_instance_allowed": "Fediverse Feed ist schon eingerichtet. Schlüssel ändern über „Konfigurieren“."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Zugangsschlüssel",
+        "description": "Ohne Schlüssel wird der Server ohne Konto abgefragt.",
+        "data": {
+          "pixelfed_instance": "Pixelfed-Server",
+          "pixelfed_token": "Pixelfed-Zugangsschlüssel",
+          "mastodon_instance": "Mastodon-Server",
+          "mastodon_token": "Mastodon-Zugangsschlüssel (optional)"
+        }
+      }
+    },
+    "error": {
+      "invalid_token": "Der Server lehnt diesen Schlüssel ab.",
+      "cannot_connect": "Der Server ist nicht erreichbar."
+    }
+  }
+}

@@ -1,0 +1,207 @@
+{
+ "posts": [
+  {
+   "post": {
+    "id": 1,
+    "name": "Picture",
+    "url": "https://lemmy.example/pictrs/image/a.png",
+    "body": "",
+    "removed": false,
+    "deleted": false,
+    "nsfw": false,
+    "thumbnail_url": null,
+    "ap_id": "https://lemmy.example/post/1",
+    "published": "2026-10-28T12:00:00.000000Z",
+    "url_content_type": "image/png",
+    "alt_text": ""
+   },
+   "creator": {
+    "name": "alice",
+    "actor_id": "https://lemmy.example/u/alice"
+   },
+   "community": {
+    "name": "memes",
+    "nsfw": false,
+    "actor_id": "https://lemmy.example/c/memes"
+   },
+   "counts": {
+    "score": 600,
+    "comments": 1
+   }
+  },
+  {
+   "post": {
+    "id": 2,
+    "name": "Video",
+    "url": "https://lemmy.example/pictrs/image/b.mp4",
+    "body": "",
+    "removed": false,
+    "deleted": false,
+    "nsfw": false,
+    "thumbnail_url": null,
+    "ap_id": "https://lemmy.example/post/2",
+    "published": "2026-10-28T12:00:00.000000Z",
+    "url_content_type": "video/mp4",
+    "alt_text": ""
+   },
+   "creator": {
+    "name": "alice",
+    "actor_id": "https://lemmy.example/u/alice"
+   },
+   "community": {
+    "name": "memes",
+    "nsfw": false,
+    "actor_id": "https://lemmy.example/c/memes"
+   },
+   "counts": {
+    "score": 10,
+    "comments": 1
+   }
+  },
+  {
+   "post": {
+    "id": 3,
+    "name": "Spicy",
+    "url": "https://lemmy.example/pictrs/image/c.jpg",
+    "body": "",
+    "removed": false,
+    "deleted": false,
+    "nsfw": true,
+    "thumbnail_url": null,
+    "ap_id": "https://lemmy.example/post/3",
+    "published": "2026-10-28T12:00:00.000000Z",
+    "url_content_type": "image/jpeg",
+    "alt_text": ""
+   },
+   "creator": {
+    "name": "alice",
+    "actor_id": "https://lemmy.example/u/alice"
+   },
+   "community": {
+    "name": "memes",
+    "nsfw": false,
+    "actor_id": "https://lemmy.example/c/memes"
+   },
+   "counts": {
+    "score": 10,
+    "comments": 1
+   }
+  },
+  {
+   "post": {
+    "id": 4,
+    "name": "Link with preview",
+    "url": "https://news.example/article",
+    "body": "",
+    "removed": false,
+    "deleted": false,
+    "nsfw": false,
+    "thumbnail_url": "https://lemmy.example/pictrs/image/t.jpg",
+    "ap_id": "https://lemmy.example/post/4",
+    "published": "2026-10-28T12:00:00.000000Z",
+    "url_content_type": "text/html",
+    "alt_text": ""
+   },
+   "creator": {
+    "name": "alice",
+    "actor_id": "https://lemmy.example/u/alice"
+   },
+   "community": {
+    "name": "memes",
+    "nsfw": false,
+    "actor_id": "https://lemmy.example/c/memes"
+   },
+   "counts": {
+    "score": 10,
+    "comments": 1
+   }
+  },
+  {
+   "post": {
+    "id": 5,
+    "name": "Text only",
+    "url": null,
+    "body": "",
+    "removed": false,
+    "deleted": false,
+    "nsfw": false,
+    "thumbnail_url": null,
+    "ap_id": "https://lemmy.example/post/5",
+    "published": "2026-10-28T12:00:00.000000Z",
+    "url_content_type": null,
+    "alt_text": ""
+   },
+   "creator": {
+    "name": "alice",
+    "actor_id": "https://lemmy.example/u/alice"
+   },
+   "community": {
+    "name": "memes",
+    "nsfw": false,
+    "actor_id": "https://lemmy.example/c/memes"
+   },
+   "counts": {
+    "score": 10,
+    "comments": 1
+   }
+  },
+  {
+   "post": {
+    "id": 6,
+    "name": "Removed",
+    "url": "https://lemmy.example/pictrs/image/d.png",
+    "body": "",
+    "removed": false,
+    "deleted": true,
+    "nsfw": false,
+    "thumbnail_url": null,
+    "ap_id": "https://lemmy.example/post/6",
+    "published": "2026-10-28T12:00:00.000000Z",
+    "url_content_type": "image/png",
+    "alt_text": ""
+   },
+   "creator": {
+    "name": "alice",
+    "actor_id": "https://lemmy.example/u/alice"
+   },
+   "community": {
+    "name": "memes",
+    "nsfw": false,
+    "actor_id": "https://lemmy.example/c/memes"
+   },
+   "counts": {
+    "score": 10,
+    "comments": 1
+   }
+  },
+  {
+   "post": {
+    "id": 7,
+    "name": "YouTube",
+    "url": "https://www.youtube.com/watch?v=x",
+    "body": "",
+    "removed": false,
+    "deleted": false,
+    "nsfw": false,
+    "thumbnail_url": "https://lemmy.example/pictrs/image/y.jpg",
+    "ap_id": "https://lemmy.example/post/7",
+    "published": "2026-10-28T12:00:00.000000Z",
+    "url_content_type": null,
+    "alt_text": ""
+   },
+   "creator": {
+    "name": "alice",
+    "actor_id": "https://lemmy.example/u/alice"
+   },
+   "community": {
+    "name": "memes",
+    "nsfw": false,
+    "actor_id": "https://lemmy.example/c/memes"
+   },
+   "counts": {
+    "score": 10,
+    "comments": 1
+   }
+  }
+ ]
+}

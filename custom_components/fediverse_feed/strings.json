@@ -1,0 +1,41 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Fediverse Feed",
+        "description": "Lemmy and Mastodon work without an account. Pixelfed servers need an access token: in Pixelfed open Settings → Applications → Personal access tokens, create one with the scope 'read' and paste it here. A Mastodon token is only needed for servers that hide their timelines.",
+        "data": {
+          "pixelfed_instance": "Pixelfed server",
+          "pixelfed_token": "Pixelfed access token",
+          "mastodon_instance": "Mastodon server",
+          "mastodon_token": "Mastodon access token (optional)"
+        }
+      }
+    },
+    "error": {
+      "invalid_token": "The server rejected this token.",
+      "cannot_connect": "The server cannot be reached."
+    },
+    "abort": {
+      "single_instance_allowed": "Fediverse Feed is already set up. Use Configure to change the tokens."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Access tokens",
+        "description": "Leave a token empty to use the server without an account.",
+        "data": {
+          "pixelfed_instance": "Pixelfed server",
+          "pixelfed_token": "Pixelfed access token",
+          "mastodon_instance": "Mastodon server",
+          "mastodon_token": "Mastodon access token (optional)"
+        }
+      }
+    },
+    "error": {
+      "invalid_token": "The server rejected this token.",
+      "cannot_connect": "The server cannot be reached."
+    }
+  }
+}
