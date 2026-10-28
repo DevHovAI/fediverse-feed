@@ -65,7 +65,8 @@ period: day
 | `nsfw` | `false` | Show posts marked NSFW (Lemmy) or sensitive (Mastodon/Pixelfed). |
 | `images_only` | `true` | Skip posts without a picture. |
 | `show_title` | `true` | Post title. |
-| `show_meta` | `true` | Community or account, author, age and score. |
+| `show_credit` | `true` | Creator as a small watermark in the corner of the picture. |
+| `show_meta` | `false` | Info line below: community, age and score (and the creator if `show_credit` is off). |
 | `show_text` | `false` | Post text. |
 | `max_height` | `450` | Maximum picture height in pixels. |
 | `title` | – | Card title. |

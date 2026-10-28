@@ -23,7 +23,8 @@ const DEFAULTS = {
   nsfw: false,
   images_only: true,
   show_title: true,
-  show_meta: true,
+  show_meta: false,
+  show_credit: true,
   show_text: false,
   max_height: 450,
   rotate: 0,
@@ -67,7 +68,8 @@ const LABELS = {
   nsfw: "Show NSFW posts",
   images_only: "Pictures only",
   show_title: "Title",
-  show_meta: "Author, place and time",
+  show_meta: "Place, time and score",
+  show_credit: "Creator in the picture corner",
   show_text: "Post text",
   max_height: "Maximum picture height (px)",
   title: "Card title (optional)",
@@ -155,6 +157,7 @@ const createCardClass = (Base) =>
               { name: "images_only", selector: { boolean: {} } },
               { name: "show_title", selector: { boolean: {} } },
               { name: "show_meta", selector: { boolean: {} } },
+              { name: "show_credit", selector: { boolean: {} } },
               { name: "show_text", selector: { boolean: {} } },
             ],
           },
@@ -300,7 +303,15 @@ const createCardClass = (Base) =>
       const t = this._t;
       const url = safeUrl(post.url);
       const image = safeUrl(post.image);
-      const meta = [post.place, post.author !== post.place ? post.author : "", this._age(post.created)]
+      // Creator as a small watermark in the picture corner saves a line below it.
+      const lemmy = c.source === "lemmy";
+      const creator = lemmy ? (post.author || "").split("@")[0] : post.place || (post.author || "").split("@")[0];
+      const credit = image && c.show_credit && creator;
+      // With the watermark, Lemmy keeps only the community below; Mastodon/Pixelfed need nothing more.
+      const who = credit
+        ? [lemmy ? post.place : ""]
+        : [post.place, post.author !== post.place ? post.author : ""];
+      const meta = [...who, this._age(post.created)]
         .filter(Boolean)
         .map(esc)
         .join(" · ");
@@ -309,7 +320,10 @@ const createCardClass = (Base) =>
         ${
           image
             ? `<a class="media" href="${esc(url)}" target="_blank" rel="noopener noreferrer" title="${esc(t.open)}">
-                 <img src="${esc(image)}" alt="${esc(post.image_alt || post.title)}" style="max-height:${height}px">
+                 <span class="frame">
+                   <img src="${esc(image)}" alt="${esc(post.image_alt || post.title)}" style="max-height:${height}px">
+                   ${credit ? `<span class="credit" title="${esc(post.author)}">${esc(creator)}</span>` : ""}
+                 </span>
                </a>`
             : ""
         }
@@ -393,7 +407,12 @@ const STYLE = `
   .media { display: flex; justify-content: center; background: var(--secondary-background-color); margin-top: 12px; touch-action: pan-y; }
   .title + .media { margin-top: 12px; }
   ha-card > .media:first-child { margin-top: 0; }
-  .media img { display: block; width: 100%; object-fit: contain; user-select: none; }
+  /* The frame is as wide as the picture, so the watermark sits on the picture, not on the bars beside it. */
+  .frame { position: relative; display: block; max-width: 100%; }
+  .media img { display: block; max-width: 100%; width: auto; height: auto; user-select: none; }
+  .credit { position: absolute; right: 6px; bottom: 6px; max-width: 60%; overflow: hidden; text-overflow: ellipsis;
+            white-space: nowrap; font-size: 0.7rem; line-height: 1.4; padding: 0 6px; border-radius: 4px;
+            color: rgba(255, 255, 255, 0.9); background: rgba(0, 0, 0, 0.35); pointer-events: none; }
   .info { padding: 10px 16px 14px; }
   .post-title { display: block; color: var(--primary-text-color); text-decoration: none; font-weight: 500; line-height: 1.35; }
   .text { margin-top: 6px; white-space: pre-line; color: var(--primary-text-color); font-size: 0.9rem; line-height: 1.4;
