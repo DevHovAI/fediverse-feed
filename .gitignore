@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual environment: machine specific, never committed.
+.venv/
+venv/
+
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Generated translations
+po/locale/
+
+# Local and private — none of this belongs in a repository.
+.claude/
+.env
+.env.*
+*.bak
+*.bak-*
+*.log
+secrets.*
+credentials.*
