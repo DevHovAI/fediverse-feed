@@ -4,6 +4,10 @@ A Home Assistant integration and dashboard card that shows the top pictures of a
 **Lemmy** community, a **Mastodon** hashtag or account, or a **Pixelfed** feed – for
 example the meme of the day from `memes@lemmy.world`.
 
+<img src="images/screenshot.png" alt="Two Fediverse Feed cards: the meme of the day from a Lemmy community with arrows to the next posts, and a Pixelfed picture" width="720">
+
+<sub>Example pictures drawn for this README.</sub>
+
 - Source, community/hashtag/account and server as free text in the card editor
 - Sort by **Top** (hour, day, week, month, year, all time), **Hot**, **New** or **Active**
 - One post (“picture of the day”) or several to swipe through, optionally rotating
