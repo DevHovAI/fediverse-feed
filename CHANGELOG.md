@@ -8,6 +8,7 @@ First version.
   hashtags, accounts and the public timeline
 - Card editor with source, server, community/hashtag/account, sort and period
 - One or several posts, arrows, swipe and optional rotation
+- Creator as a small watermark on the picture; info line below optional
 - NSFW switch; videos are skipped
 - Feeds cached for 30 minutes; the last good result stays when a server is unreachable
 - Access tokens for Pixelfed (and locked-down Mastodon servers), checked during setup
