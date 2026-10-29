@@ -8,6 +8,7 @@ from custom_components.fediverse_feed.api import (
     parse_lemmy,
     parse_status,
     rank,
+    split_feeds,
     strip_hashtag_lines,
 )
 
@@ -95,3 +96,17 @@ def test_helpers():
     assert clean_instance("", "pixelfed") == "pixelfed.social"
     assert html_to_text("<p>One<br>Two</p><p>Three</p>") == "One\nTwo\n\nThree"
     assert strip_hashtag_lines("#meme #funny\nWhen it works\n\n#dev") == "When it works"
+
+
+def test_split_feeds():
+    base = Query(source="lemmy", instance="lemmy.example", query="")
+    assert split_feeds(base) == [base]
+    feeds = split_feeds(Query(source="lemmy", instance="lemmy.example",
+                              query="memes, cats@lemmy.ml ,Mastodon:#cats, pixelfed:@name,lemmy:, ,"))
+    assert [(f.source, f.instance, f.query) for f in feeds] == [
+        ("lemmy", "lemmy.example", "memes"),
+        ("lemmy", "lemmy.example", "cats@lemmy.ml"),
+        ("mastodon", "mastodon.social", "#cats"),
+        ("pixelfed", "pixelfed.social", "@name"),
+        ("lemmy", "lemmy.example", ""),
+    ]

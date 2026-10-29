@@ -107,3 +107,40 @@ async def test_card_is_served(hass: HomeAssistant, hass_client):
     resp = await client.get("/fediverse_feed/fediverse-feed-card.js")
     assert resp.status == 200
     assert "fediverse-feed-card" in await resp.text()
+
+
+async def test_several_feeds_mixed(
+    hass: HomeAssistant, hass_ws_client, aioclient_mock, lemmy_posts, mastodon_tag
+):
+    aioclient_mock.get(LEMMY_URL, json=lemmy_posts)
+    # Another source than the card's uses that source's default server
+    aioclient_mock.get("https://mastodon.social/api/v1/timelines/tag/memes", json=mastodon_tag)
+    await setup(hass)
+    msg = await ask(hass_ws_client, source="lemmy", instance="lemmy.example",
+                    query="memes, mastodon:#memes", count=2)
+    assert msg["success"]
+    posts = msg["result"]["posts"]
+    # count is per feed
+    assert sorted(p["source"] for p in posts) == ["lemmy", "lemmy", "mastodon", "mastodon"]
+
+
+async def test_one_broken_feed_keeps_the_others(
+    hass: HomeAssistant, hass_ws_client, aioclient_mock, lemmy_posts
+):
+    aioclient_mock.get(LEMMY_URL, json=lemmy_posts)
+    aioclient_mock.get("https://mastodon.social/api/v1/timelines/tag/nothing", status=404)
+    await setup(hass)
+    msg = await ask(hass_ws_client, source="lemmy", instance="lemmy.example",
+                    query="memes, mastodon:#nothing")
+    assert msg["success"]
+    assert [p["source"] for p in msg["result"]["posts"]] == ["lemmy"]
+
+
+async def test_mastodon_account_without_at(hass: HomeAssistant, hass_ws_client, aioclient_mock, mastodon_tag):
+    aioclient_mock.get("https://masto.example/api/v1/accounts/lookup", json={"id": "7"})
+    aioclient_mock.get("https://masto.example/api/v1/accounts/7/statuses", json=mastodon_tag)
+    await setup(hass)
+    msg = await ask(hass_ws_client, source="mastodon", instance="masto.example",
+                    query="catlover@masto.example", sort="new")
+    assert msg["success"]
+    assert aioclient_mock.mock_calls[0][1].query["acct"] == "catlover@masto.example"

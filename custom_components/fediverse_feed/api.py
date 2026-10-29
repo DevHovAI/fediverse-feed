@@ -7,7 +7,7 @@ Videos are dropped everywhere: the card shows pictures only.
 from __future__ import annotations
 
 import re
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import UTC, datetime, timedelta
 from html.parser import HTMLParser
 from urllib.parse import urlparse
@@ -15,7 +15,7 @@ from urllib.parse import urlparse
 import aiohttp
 
 TIMEOUT = aiohttp.ClientTimeout(total=20)
-USER_AGENT = "HomeAssistant-FediverseFeed/0.1 (+https://github.com/DevHovAI/fediverse-feed)"
+USER_AGENT = "HomeAssistant-FediverseFeed/0.2 (+https://github.com/DevHovAI/fediverse-feed)"
 
 SOURCES = ("lemmy", "mastodon", "pixelfed")
 DEFAULT_INSTANCES = {"lemmy": "lemmy.world", "mastodon": "mastodon.social", "pixelfed": "pixelfed.social"}
@@ -72,6 +72,7 @@ class Post:
     created: str
     score: int
     nsfw: bool
+    source: str = ""
 
     def as_dict(self) -> dict:
         return asdict(self)
@@ -93,6 +94,29 @@ class Query:
         # count is applied after the cache, so one fetch serves cards with different counts
         return (self.source, self.instance.lower(), self.query.strip().lower(), self.sort, self.period,
                 self.nsfw, self.images_only)
+
+
+_PREFIX = re.compile(r"\s*(lemmy|mastodon|pixelfed)\s*:(.*)", re.I | re.S)
+
+
+def split_feeds(q: Query) -> list[Query]:
+    """'memes, mastodon:#cats' → one query per comma-separated feed.
+
+    A feed may name its own source in front; it then uses that source's default server,
+    unless it is the card's source.
+    """
+    feeds = []
+    for part in q.query.split(","):
+        source, query, instance = q.source, part.strip(), q.instance
+        if m := _PREFIX.fullmatch(part):
+            # "mastodon:" alone is a feed too: the trends of that source
+            source, query = m.group(1).lower(), m.group(2).strip()
+            if source != q.source:
+                instance = DEFAULT_INSTANCES[source]
+        elif not query:
+            continue
+        feeds.append(replace(q, source=source, instance=instance, query=query))
+    return feeds or [q]
 
 
 class _Text(HTMLParser):
@@ -205,8 +229,8 @@ class FeedClient:
                 statuses = await self._timeline(q, "/api/v1/timelines/public", {})
             else:
                 statuses = await self._timeline(q, "/api/v1/trends/statuses", None)
-        elif query.startswith("@"):
-            account = await self._account(q.instance, query[1:])
+        elif query.startswith("@") or ("@" in query and not query.startswith("#")):
+            account = await self._account(q.instance, query.lstrip("@"))
             statuses = await self._timeline(q, f"/api/v1/accounts/{account}/statuses",
                                             {"exclude_replies": "true"})
         else:
@@ -283,6 +307,7 @@ def parse_lemmy(view: dict, q: Query) -> Post | None:
         created=post.get("published", ""),
         score=int(view.get("counts", {}).get("score", 0)),
         nsfw=nsfw,
+        source="lemmy",
     )
 
 
@@ -316,6 +341,7 @@ def parse_status(status: dict, q: Query) -> Post | None:
         created=status.get("created_at", ""),
         score=int(status.get("favourites_count", 0)) + int(status.get("reblogs_count", 0)),
         nsfw=nsfw,
+        source=q.source,
     )
 
 
