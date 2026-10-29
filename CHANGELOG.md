@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0
+
+- Several comma-separated feeds per card, each optionally with its own source
+  (`memes, mastodon:#cats`); the number of posts counts per feed, mixed at random
+- Mastodon/Pixelfed accounts also without the leading `@` (`name@server`)
+- One failing feed no longer empties the card
+
 ## 0.1.0
 
 First version.

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import asyncio
+import logging
+import random
 from pathlib import Path
 from typing import Any
 
@@ -16,7 +19,19 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.loader import async_get_integration
 
-from .api import PERIODS, SORTS, SOURCES, AuthRequired, FeedClient, FeedError, NotFound, Query, clean_instance
+from .api import (
+    PERIODS,
+    SORTS,
+    SOURCES,
+    AuthRequired,
+    FeedClient,
+    FeedError,
+    NotFound,
+    Post,
+    Query,
+    clean_instance,
+    split_feeds,
+)
 from .const import (
     CARD_URL,
     CONF_MASTODON_INSTANCE,
@@ -26,6 +41,8 @@ from .const import (
     DOMAIN,
 )
 from .feed import FeedCache
+
+_LOGGER = logging.getLogger(__name__)
 
 type FeedConfigEntry = ConfigEntry[FeedCache]
 
@@ -104,14 +121,49 @@ async def ws_posts(
         count=msg["count"],
     )
     try:
-        posts = await entries[0].runtime_data.posts(q)
-    except AuthRequired:
-        connection.send_error(msg["id"], "auth_required", f"{q.instance} needs an access token")
+        posts = await _posts(entries[0].runtime_data, q)
+    except FeedFailed as failed:
+        feed, err = failed.feed, failed.__cause__
+        if isinstance(err, AuthRequired):
+            connection.send_error(msg["id"], "auth_required", f"{feed.instance} needs an access token")
+        elif isinstance(err, NotFound):
+            connection.send_error(msg["id"], "not_found", f"{feed.query} not found on {feed.instance}")
+        else:
+            connection.send_error(msg["id"], "cannot_connect", str(err))
         return
-    except NotFound:
-        connection.send_error(msg["id"], "not_found", f"{q.query} not found on {q.instance}")
-        return
-    except FeedError as err:
-        connection.send_error(msg["id"], "cannot_connect", str(err))
-        return
-    connection.send_result(msg["id"], {"posts": [p.as_dict() for p in posts[: q.count]]})
+    connection.send_result(msg["id"], {"posts": [p.as_dict() for p in posts]})
+
+
+class FeedFailed(Exception):
+    """Every feed of a card failed; carries the first one."""
+
+    def __init__(self, feed: Query) -> None:
+        super().__init__(feed.query)
+        self.feed = feed
+
+
+async def _posts(cache: FeedCache, q: Query) -> list[Post]:
+    """count posts of each comma-separated feed, mixed in random order."""
+    feeds = split_feeds(q)
+    results = await asyncio.gather(*(cache.posts(f) for f in feeds), return_exceptions=True)
+    posts: list[Post] = []
+    seen: set[str] = set()
+    errors = []
+    for feed, result in zip(feeds, results, strict=True):
+        if isinstance(result, FeedError):
+            errors.append((feed, result))
+            continue
+        if isinstance(result, BaseException):
+            raise result
+        fresh = [p for p in result if p.url not in seen]
+        seen.update(p.url for p in fresh[: q.count])
+        posts += fresh[: q.count]
+    if errors and len(errors) == len(feeds):
+        feed, err = errors[0]
+        raise FeedFailed(feed) from err
+    for feed, err in errors:
+        # One broken feed must not empty the card; the others still show.
+        _LOGGER.warning("Feed %s:%s on %s failed: %s", feed.source, feed.query, feed.instance, err)
+    if len(feeds) > 1:
+        random.shuffle(posts)
+    return posts

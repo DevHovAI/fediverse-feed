@@ -7,7 +7,7 @@
  * resource is needed. Colors come from the Home Assistant theme.
  */
 
-const VERSION = "0.1.0";
+const VERSION = "0.2.0";
 const TAG = "fediverse-feed-card";
 
 // The integration fetches each feed at most every 30 minutes; asking more often only hits its cache.
@@ -60,7 +60,7 @@ const TEXTS = {
 const LABELS = {
   source: "Source",
   instance: "Server (optional)",
-  query: "Community, #hashtag or @account",
+  query: "Community, #hashtag or @account – several separated by commas",
   sort: "Sort",
   period: "Period (for Top)",
   count: "Number of posts",
@@ -79,7 +79,9 @@ const HELPERS = {
   instance: "Empty: lemmy.world, mastodon.social or pixelfed.social",
   query:
     "Lemmy: community such as memes or memes@lemmy.ml (empty = whole server). " +
-    "Mastodon/Pixelfed: #hashtag, @account or @account@server (empty = trends / public timeline).",
+    "Mastodon/Pixelfed: #hashtag, @account or @account@server (empty = trends / public timeline). " +
+    "Several feeds with commas, each with its own source if you like: memes, mastodon:#cats, pixelfed:@name. " +
+    "Number of posts then counts per feed, mixed at random.",
 };
 
 const esc = (s) =>
@@ -304,7 +306,7 @@ const createCardClass = (Base) =>
       const url = safeUrl(post.url);
       const image = safeUrl(post.image);
       // Creator as a small watermark in the picture corner saves a line below it.
-      const lemmy = c.source === "lemmy";
+      const lemmy = (post.source || c.source) === "lemmy";
       const creator = lemmy ? (post.author || "").split("@")[0] : post.place || (post.author || "").split("@")[0];
       const credit = image && c.show_credit && creator;
       // With the watermark, Lemmy keeps only the community below; Mastodon/Pixelfed need nothing more.

@@ -7,6 +7,7 @@ example the meme of the day from `memes@lemmy.world`.
 <img src="images/screenshot.png" alt="Two Fediverse Feed cards: the meme of the day from memes@lemmy.world and the top post of the #memes hashtag on Mastodon, each with the creator in the corner and arrows to the next posts" width="720">
 
 - Source, community/hashtag/account and server as free text in the card editor
+- Several feeds in one card, even from different sources: `memes, mastodon:#cats`
 - Sort by **Top** (hour, day, week, month, year, all time), **Hot**, **New** or **Active**
 - One post (“picture of the day”) or several to swipe through, optionally rotating
 - NSFW posts hidden unless switched on; videos are always skipped
@@ -60,7 +61,7 @@ period: day
 | `query` | `memes` | Lemmy: community (`memes`, `memes@lemmy.ml`), empty = whole server. Mastodon/Pixelfed: `#hashtag`, `@account` or `@account@server`; empty = trending posts (Mastodon) or the public timeline (Pixelfed). |
 | `sort` | `top` | `top`, `hot`, `new`, `active` (Lemmy only). |
 | `period` | `day` | For `top`: `hour`, `day`, `week`, `month`, `year`, `all`. |
-| `count` | `1` | Number of posts, up to 20. More than one adds arrows and dots; swipe on the picture. |
+| `count` | `1` | Number of posts per feed, up to 20. More than one post adds arrows and dots; swipe on the picture. |
 | `rotate` | `0` | Show the next post every … seconds; `0` = off. |
 | `nsfw` | `false` | Show posts marked NSFW (Lemmy) or sensitive (Mastodon/Pixelfed). |
 | `images_only` | `true` | Skip posts without a picture. |
@@ -72,6 +73,21 @@ period: day
 | `title` | – | Card title. |
 
 Tapping the picture or the title opens the post.
+
+### Several feeds
+
+Separate feeds with commas. Each one may start with its own source; it then uses that
+source's default server (or `instance`, if the card has the same source):
+
+```yaml
+type: custom:fediverse-feed-card
+source: lemmy
+query: memes, cats@lemmy.ml, mastodon:#cats, pixelfed:@account@server
+count: 2
+```
+
+The card takes `count` posts from each feed and mixes them in random order. If one feed
+fails, the others still show; the error is in the Home Assistant log.
 
 ### How “Top” works
 
